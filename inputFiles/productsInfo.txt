@@ -1,0 +1,4 @@
+ID del producto; Nombre del producto; Precio del producto
+27364; Horno Micro ondas; $ 300000
+93847; Extractor De Jugos; $ 734000
+12738; Plancha Para Cabello; $ 1150000
