@@ -1,4 +1,4 @@
 ID del producto; Nombre del producto; Precio del producto
-27364; Horno Micro ondas; $ 300000
-17263; Cafetera Samurai; $ 560000
-948556; Televisor 32 pulg; $ 900000
+10234; Teatro en casa sony; $ 1460000
+39483; Lavadora Samsung; $ 280000
+10234; Teatro en casa sony; $ 1460000
