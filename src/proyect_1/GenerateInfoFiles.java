@@ -1,6 +1,8 @@
 package proyect_1;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
@@ -20,9 +22,9 @@ public class GenerateInfoFiles {
 		// TODO Auto-generated method stub
 		 GenerateInfoFiles generator = new GenerateInfoFiles();
 		 
-		 		generator.createSalesManInfoFile(5);  // The number of sellers you want to create is passed as a parameter.
-	            generator.createProductsFile(3); //You must select a parameter between 1 and 13
-	            generator.createSalesMenFile(10, "Lucia Rodriguez", 2795150);  //Generate sales file for Lucia Rodriguez
+		 		generator.createSalesManInfoFile(3);  // The number of sellers you want to create is passed as a parameter.
+	            generator.createProductsFile(9); //You must select a parameter between 1 and 13
+	            generator.createSalesMenFile(4, "inputFiles/salesmanInfo.txt");  //Generate sales file for Lucia Rodriguez
 	    }	
 
 	String[] name = {"Juan", "Pedro", "Luis", "Carlos", "Ana", "Maria", "Lucia", "Edwin", "Antonio", "Guillermo", "Milena", "Monica", "David"};
@@ -37,39 +39,68 @@ public class GenerateInfoFiles {
 	 * <p>This method creates a sales file in the "inputFiles" folder with the name and sales
 	 * from the specified seller, selecting random products.</p>
 	 *
-	 * @param randomSalesCount The number of sales that will be generated randomly.
 	 * @param name The name of the seller.
 	 * @param id The seller's identification number.
-	 * @throws IOException If an error occurs while writing the file.
+	 * @throws IOException If case a file reading error occurs
 	 */	
     
 //Literal A requested in the project
-	public void createSalesMenFile(int randomSalesCount, String name, long id) throws IOException {
+	public void createSalesMenFile(int randomSalesCount, String filepath) throws IOException {
 		
-		 try (BufferedWriter writer = new BufferedWriter(new FileWriter("inputFiles/" + name + "_sales.txt"))) {
-	         Random random = new Random();
+		 try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+			 String line;
+			 
+			 while ((line = reader.readLine()) != null) {
+				 String[] data = line.split("; ");
+				 if (data.length == 4) { // Make sure the line has all the expected information
+	                    String id = data[1].trim();
+	                    String firstName = data[2].trim(); // Get the seller's name
+	                    String lastName = data[3].trim();  // Get the seller's last name
+	                    
+	                    String fullName = firstName + " " + lastName; // Combine first and last name correctly
+	                    
+	                 // Print debugging information to verify
+	                    System.out.println("Processing seller: " + fullName + ", ID: " + id);
 
-	         writer.write("CC; " + id + "\n");// Write the header with the seller's information
-
-	         
-	         for (int i = 0; i < randomSalesCount; i++) {// Record the number of sales specified in randomSalesCount
-	             
-	             int randomIndex = random.nextInt(nameProducts.length);// Select a random product to register
-	             /*String selectedProduct = nameProducts[randomIndex];*/
-	             int selectedProductId = idProducts[randomIndex];
-
-	          
-	             int quantitySold = random.nextInt(5) + 1;// Generate a random sold quantity between 1 and 5
-
-	             writer.write(selectedProductId+"; "+ quantitySold + "\n");//Write the sale information to the file
-	         }
-
-	         System.out.println("Sales file successfully generated for " + name); // Indicates in the console that the sales file was generated successfully
-	     } catch (IOException e) {
-	         System.out.println("An error occurred while generating the sales file: " + e.getMessage()); // Print an error message if an exception occurs while generating the file
-	     }
-		
+	                    // Generate sales file for each seller
+	                    generateSalesFileForSalesman(randomSalesCount, fullName, Integer.parseInt(id));
+	                }
+	            }
+				 
+				 
+				 
+			 }catch (IOException e) {
+		         System.out.println("An error occurred while generating the sales file: " + e.getMessage()); // Print an error message if an exception occurs while generating the file
+		     }
 	}
+	/**
+    * Generate the sales file for each specific seller.
+    * 
+    * @param randomSalesCount Number of sales.
+    * @param name Seller name.
+    * @param id ID of the seller.
+    * @throws IOException In case of writing error.
+    */
+private void generateSalesFileForSalesman(int randomSalesCount, String fullName, int id) {
+		// TODO Auto-generated method stub
+	 	Random random = new Random();
+	 	
+	 	try (BufferedWriter writer = new BufferedWriter(new FileWriter("inputFiles/" + fullName + "_sales.txt"))) {
+           writer.write("CC; " + id + "\n"); // Write the header with the seller identification
+           
+           for (int i = 0; i < randomSalesCount; i++) {
+               int randomIndex = random.nextInt(nameProducts.length); // Random product
+               int selectedProductId = idProducts[randomIndex];
+               int quantitySold = random.nextInt(5) + 1; // Random quantity sold between 1 and 5
+
+               writer.write(selectedProductId + "; " + quantitySold + "\n");
+           }
+           System.out.println("Sales file generated for " + fullName);
+           
+	}catch (IOException e) {
+       System.out.println("Error generating file: " + e.getMessage());
+   }
+}
 //Literal completion A requested in the project
 	
 //Literal B requested in the project	
@@ -200,9 +231,4 @@ public class GenerateInfoFiles {
 	}
 //C literal completion requested in the project
 	
-}
-
-
-	
-	
-	
+}	
