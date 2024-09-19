@@ -55,7 +55,7 @@ public class GenerateInfoFiles {
 	         for (int i = 0; i < randomSalesCount; i++) {// Record the number of sales specified in randomSalesCount
 	             
 	             int randomIndex = random.nextInt(nameProducts.length);// Select a random product to register
-	             String selectedProduct = nameProducts[randomIndex];
+	             /*String selectedProduct = nameProducts[randomIndex];*/
 	             int selectedProductId = idProducts[randomIndex];
 
 	          
