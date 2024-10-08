@@ -29,6 +29,9 @@ public class Main {
 
 	        // Map to store total sales by seller
 	        Map<String, Integer> salesBySeller = new HashMap<>();
+	     // Map to store total quantity sold per product
+	        Map<Integer, Integer> productQuantities = new HashMap<>();
+	        
 
 	     // Process each file in the specified directory
 	        if (files != null) {
@@ -39,7 +42,7 @@ public class Main {
 	                    String nameSeller = file.getName().replace("_sales.txt", "");
 	                    try {
 	                    	// Calculate total sales from the sales file
-	                        int totalSales = (int) processSalesFiles(file, idsProducts, prices);
+	                        int totalSales = (int) processSalesFiles(file, idsProducts, prices, productQuantities);
 	                     // Store total sales in the map with seller's name as the key
 	                        salesBySeller.put(nameSeller, totalSales);
 	                    } catch (IOException e) {
@@ -66,7 +69,9 @@ public class Main {
 	            System.out.println("Error writing CSV file");
 	            e.printStackTrace();
 	        }
-
+	        
+	        generateProductSalesReport(productQuantities, nameProductos, prices, idsProducts);
+	        
 	        System.out.println("CSV file generated successfully.");
 	    }
 	
@@ -86,10 +91,10 @@ public class Main {
 	 * @throws IOException If an error occurs while reading the file.
 	 */
 	 // Method to process each sales file and calculate the total sales
-    private static int processSalesFiles(File file, int[] idsProductos, int[] prices) throws IOException {
+    private static int processSalesFiles(File file, int[] idsProductos, int[] prices, Map<Integer, Integer> productQuantities) throws IOException {//SE PASO COMO PARAMETRO productQuantities ESTO SE REQUERIA PARA PODER GENERAR EL ARCHIVO DEL PUNTO 4
         int total = 0;
         List<String> lines = Files.readAllLines(file.toPath());
-
+        
         // Process lines starting from the second (where products and quantities are listed)
         for (int i = 1; i < lines.size(); i++) {
         	String[] parts = lines.get(i).split(";");  // Split the product ID and quantity
@@ -105,9 +110,16 @@ public class Main {
                     int subtotal = prices[index] * quantitySold;  // Calculate sub-total
                     total += subtotal;  // Add sub-total to total
                     
-                  }
+                    productQuantities.put(idProducts, productQuantities.getOrDefault(idProducts, 0) + quantitySold);//MODIFICADO SE AGREGO PARA PODER OBTENER EL ARCHIVO DEL PUNTO CUATRO--------------------------------------------------------------------------
+                    
+                  }else {//MODIFICADO SE AGREGO PARA PODER OBTENER EL ARCHIVO DEL PUNTO CUATRO--------------------------------------------------------------------------
+                      System.out.println("Producto no encontrado con ID: " + idProducts);}//MODIFICADO SE AGREGO PARA PODER OBTENER EL ARCHIVO DEL PUNTO CUATRO--------------------------------------------------------------------------
             }
-        }
+                else {
+                      System.out.println("Línea de ventas malformada: " + lines.get(i));//MODIFICADO SE AGREGO PARA PODER OBTENER EL ARCHIVO DEL PUNTO CUATRO--------------------------------------------------------------------------
+               }
+            }
+        
         return total;
     }
     
@@ -129,4 +141,44 @@ public class Main {
         return -1;  // If no match is found, return -1 to indicate the product ID does not exist
     }
   //Completion number 3 of what was requested for delivery
+    //***************************************************************************************************************************************************************************************************************************
+    /**
+     * Generates a CSV report of the products sold, sorted by quantity sold in descending order.
+     * 
+     * @param productQuantities A map containing the total quantity sold for each product.
+     * @param nameProducts An array containing the product names.
+     * @param prices An array containing the product prices.
+     * @param idsProducts An array containing the product IDs.
+     */
+    private static void generateProductSalesReport(Map<Integer, Integer> productQuantities, String[] nameProducts, int[] prices, int[] idsProducts) {
+        // Sort products by the total quantity sold in descending order
+        List<Map.Entry<Integer, Integer>> sortedProducts = productQuantities.entrySet()
+                .stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .collect(Collectors.toList());
+
+        // Write the product sales report to a CSV file
+        try (PrintWriter writer = new PrintWriter(new File("Product_sales_report.txt"))) {
+            writer.println("Name Product; Price; Quantity Sold");
+
+            for (Map.Entry<Integer, Integer> entry : sortedProducts) {
+                int productId = entry.getKey();
+                int quantitySold = entry.getValue();
+                
+                // Find the index of the product based on its ID
+                int index = searchIndexById(productId, idsProducts);
+
+                if (index != -1) {
+                    String productName = nameProducts[index];
+                    int price = prices[index];
+
+                    // Write the product details to the CSV file
+                    writer.println(productName + ";" + price + ";" + quantitySold);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error generating product sales CSV file");
+            e.printStackTrace();
+        }
+    }
 }

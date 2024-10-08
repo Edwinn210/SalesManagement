@@ -22,9 +22,9 @@ public class GenerateInfoFiles {
 		// TODO Auto-generated method stub
 		 GenerateInfoFiles generator = new GenerateInfoFiles();
 		 
-		 		generator.createSalesManInfoFile(6);  // The number of sellers you want to create is passed as a parameter.
-	            generator.createProductsFile(9); //You must select a parameter between 1 and 13
-	            generator.createSalesMenFile(4, "inputFiles/salesmanInfo.txt");  //Generate sales file for Lucia Rodriguez
+		 		generator.createSalesManInfoFile(3);  // The number of sellers you want to create is passed as a parameter.
+	            generator.createProductsFile(13); //You must select a parameter between 1 and 13
+	            generator.createSalesMenFile(3, "inputFiles/salesmanInfo.txt");  //Generate sales file for Lucia Rodriguez
 	    }	
 
 	String[] name = {"Juan", "Pedro", "Luis", "Carlos", "Ana", "Maria", "Lucia", "Edwin", "Antonio", "Guillermo", "Milena", "Monica", "David"};
